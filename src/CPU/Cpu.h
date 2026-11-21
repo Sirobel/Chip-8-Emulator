@@ -30,6 +30,8 @@ public:
 
     uint8_t display[SCREEN_WIDTH * SCREEN_HEIGHT]{};
 
+    bool keys[16]{};
+
     // 5 bytes with per font with  16 fonts
     const uint8_t fontSet[80] = {
         0xF0, 0x90, 0x90, 0x90, 0xF0, //0
@@ -51,7 +53,11 @@ public:
     };
 
     Cpu();
+    void reset();
     void cycle();
+    void tickTimers();
+    void updateKey(int key, bool state);
+    bool isBeeping();
 
     void sys();
     void cls();
@@ -78,13 +84,22 @@ public:
     void rnd();
     void drw();
     void skp();
+    void sknp();
+    void ldVDt();
+    void ldK();
+    void ldDtV();
+    void ldStV();
     void addIV();
+    void ldFV();
     void ldBV();
     void ldIV();
     void ldVI();
 private:
     uint16_t currentOpcode = 0;
     void (Cpu::*currentInstruction)() = nullptr;
+    bool waitingForKey = false;
+    int waitKey = -1;
+    bool vBlank = false;
 
     void initiateFontSet();
 
